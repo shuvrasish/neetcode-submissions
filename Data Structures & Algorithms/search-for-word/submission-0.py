@@ -1,0 +1,43 @@
+class Solution:
+    def exist(self, board: List[List[str]], word: str) -> bool:
+        if not board or not board[0]:
+            return False
+
+        m, n = len(board), len(board[0])
+        l = len(word)
+
+        def dfs(i: int, j: int, k:int) -> bool:
+            if i < 0 or i >= m or j < 0 or j >= n or k >= l:
+                return False
+            
+            if board[i][j] == '-':
+                return False
+            
+            if k == l - 1 and word[k] == board[i][j]:
+                return True
+            
+            found = False
+            if board[i][j] == word[k]:
+                original = word[k]
+                # set this as "-"
+                board[i][j] = "-"
+                # search for next char in all dirs
+                # up
+                found = (found or dfs(i - 1, j, k + 1))
+                # down
+                found = (found or dfs(i + 1, j, k + 1))
+                # left
+                found = (found or dfs(i, j - 1, k + 1))
+                # right
+                found = (found or dfs(i, j + 1, k + 1))
+                # reset to original char
+                board[i][j] = original
+            return found
+
+        for i in range(m):
+            for j in range(n):
+                if word[0] == board[i][j] and dfs(i, j, 0):
+                    return True
+        
+        return False
+
